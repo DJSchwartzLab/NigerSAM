@@ -1,0 +1,434 @@
+---
+title: "Niger Maaslin2"
+author: "Drew Schwartz"
+date: "12/17/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir ="/Users/drewschwartz/Box Sync/2022_DrewAmy_NigerSAMAbxMicrobiome/")
+
+#Load MaAsLin2 package into the R environment
+library(Maaslin2)
+library(readr)
+library(plyr)
+library(tidyr)
+library(ggplot2)
+?Maaslin2
+```
+
+```{r}
+#Maaslin on Metaphlan3 species
+input_data_species <- read.delim("metaphlan3datatables/210621_wide_metaphlanStandard_species.txt", header = TRUE) #The abundance table file
+input_data_genus<-read.delim("metaphlan3datatables/210621_wide_metaphlanStandard_genus.txt", header = TRUE)
+input_data_family<-read.delim("metaphlan3datatables/210621_wide_metaphlanStandard_family.txt", header = TRUE)
+input_data_phylum<-read.delim("metaphlan3datatables/210621_wide_metaphlanStandard_phyla.txt", header = TRUE)
+input_metadata<-read.delim(sep=',',"210615_Nigermetadata.csv",header=TRUE,stringsAsFactors = F)
+#Remove anything under 200K reads
+input_metadata = input_metadata[which(input_metadata$Post.processed_readcount > 200000),]
+input_metadata = input_metadata[which(!input_metadata$Treatment %in% c("Control")),]
+#Remove 2 SAMcontrol with Z score >-3
+input_metadata <- subset(input_metadata, idno!="7006" & idno!="7007")
+
+input_metadata<-data.frame(input_metadata, row.names = 11)
+input_data_species<-data.frame(input_data_species, row.names = 1)
+input_data_genus<-data.frame(input_data_genus, row.names = 1)
+input_data_family<-data.frame(input_data_family, row.names = 1)
+input_data_phylum<-data.frame(input_data_phylum, row.names = 1)
+input_ARGs<-read.delim("Shortbred_data/Data_tables/220818_Shortbredwide_wide_ShortbredID.csv", sep=",", header=TRUE)
+input_ARGs<-data.frame(input_ARGs, row.names = 1)
+
+#Species level
+fit_data = Maaslin2(
+    input_data_species,input_metadata, output = 'R_scripts/Maaslin/Description_Specieswk0plaref',
+    fixed_effects = c('Description','visMUAC','visWHZ','visdelMUAC','visdelWHZ','visAge'), random_effects = c('idno'), reference = 'Description,SAM_Placebo_wk0',max_significance = 0.05)
+
+fit_data = Maaslin2(
+    input_data_species,input_metadata, output = 'R_scripts/Maaslin/Description_Specieswk104plaref',
+    fixed_effects = c('Description','visMUAC','visWHZ','visdelMUAC','visdelWHZ','visAge'), random_effects = c('idno'), reference = 'Description,SAM_Placebo_wk104',max_significance = 0.05)
+
+#Species level
+fit_data = Maaslin2(
+    input_data_species,input_metadata, output = 'R_scripts/Maaslin/Description_Specieshealthywk104ref',
+    fixed_effects = c('Description','visMUAC','visWHZ','visdelMUAC','visdelWHZ','visAge'), random_effects = c('idno'), reference = 'Description,Healthy_NA_wk104',max_significance = 0.05)
+
+#Description at the genus level
+fit_data = Maaslin2(
+    input_data_genus,input_metadata, output = 'R_scripts/Maaslin/Description_Genuswk104plaref',
+    fixed_effects = c('Description','visMUAC','visWHZ','visdelMUAC','visdelWHZ','visAge'), random_effects = c('idno'), reference = 'Description,SAM_Placebo_wk104', max_significance = 0.05)
+fit_data = Maaslin2(
+    input_data_genus,input_metadata, output = 'R_scripts/Maaslin/Description_Genushealthywk104ref',
+    fixed_effects = c('Description','visMUAC','visWHZ','visdelMUAC','visdelWHZ','visAge'), random_effects = c('idno'), reference = 'Description,Healthy_NA_wk104', max_significance = 0.05)
+
+#Description at the family level
+fit_data = Maaslin2(
+    input_data_family,input_metadata, output = 'R_scripts/Maaslin/Description_Familywk104plaref',
+    fixed_effects = c('Description','visMUAC','visWHZ','visdelMUAC','visdelWHZ','visAge'), random_effects = c('idno'), reference = 'Description,SAM_Placebo_wk104', max_significance = 0.05)
+
+fit_data = Maaslin2(
+    input_data_family,input_metadata, output = 'R_scripts/Maaslin/Description_Familywk104healthyref',
+    fixed_effects = c('Description','visMUAC','visWHZ','visdelMUAC','visdelWHZ','visAge'), random_effects = c('idno'), reference = 'Description,Healthy_NA_wk104', max_significance = 0.05)
+
+#Description at the phylum level
+fit_data = Maaslin2(
+    input_data_phylum,input_metadata, output = 'R_scripts/Maaslin/Description_Phylumplawk104ref',
+    fixed_effects = c('Description','visMUAC','visWHZ','visdelMUAC','visdelWHZ','visAge'), random_effects = c('idno'), reference = 'Description,SAM_Placebo_wk104', max_significance = 0.05)
+
+fit_data = Maaslin2(
+    input_data_phylum,input_metadata, output = 'R_scripts/Maaslin/Description_phylumhealthyref',
+    fixed_effects = c('Description','visMUAC','visWHZ','visdelMUAC','visdelWHZ','visAge'), random_effects = c('idno'), reference = 'Description,Healthy_NA_wk104',max_significance = 0.05)
+
+# #Which species associated with richness
+# fit_data = Maaslin2(
+#     input_data_species,input_metadata, output = 'R_scripts/Maaslin/Richness_Species',
+#     fixed_effects = c('richness'), random_effects = c('idno'))
+# 
+# #Which genera associated with richness
+# fit_data = Maaslin2(
+#     input_data_genus,input_metadata, output = 'R_scripts/Maaslin/Richness_Genus',
+#     fixed_effects = c('richness'), random_effects = c('idno'))
+# 
+# #Which family associated with richness
+# fit_data = Maaslin2(
+#     input_data_family,input_metadata, output = 'R_scripts/Maaslin/Richness_Family',
+#     fixed_effects = c('richness'), random_effects = c('idno'))
+# 
+# #Which phyla associated with richness
+# fit_data = Maaslin2(
+#     input_data_phylum,input_metadata, output = 'R_scripts/Maaslin/Richness_Phylum',
+#     fixed_effects = c('richness'), random_effects = c('idno'))
+# 
+# #Species association with MUAC, Age, WHZ
+# fit_data = Maaslin2(
+#     input_data_species,input_metadata, output = 'R_scripts/Maaslin/metadataspecies',
+#     fixed_effects = c('visMUAC','visWHZ','visAge'), random_effects = c('idno'))
+# 
+# #Genus association with MUAC, Age, WHZ
+# fit_data = Maaslin2(
+#     input_data_genus,input_metadata, output = 'R_scripts/Maaslin/metadatagenus',
+#     fixed_effects = c('visMUAC','visWHZ','visAge'), random_effects = c('idno'))
+# 
+# #Family association with MUAC, Age, WHZ
+# fit_data = Maaslin2(
+#     input_data_family,input_metadata, output = 'R_scripts/Maaslin/metadatafamily',
+#     fixed_effects = c('visMUAC','visWHZ','visAge'), random_effects = c('idno'))
+# 
+# #Phylum association with MUAC, Age, WHZ
+# fit_data = Maaslin2(
+#     input_data_phylum,input_metadata, output = 'R_scripts/Maaslin/metadataphylum',
+#     fixed_effects = c('visMUAC','visWHZ','visAge'), random_effects = c('idno'))
+
+#Interested in the Week 0 to 1 change
+Week1meta<-subset(input_metadata, Week_of_follow_up==0|Week_of_follow_up==1)
+fit_data = Maaslin2(
+    input_data_species,Week1meta, output = 'R_scripts/Maaslin/Week0to1specieswk1plaref',
+    fixed_effects = c('Description'), random_effects = c('idno'),reference = 'Description,SAM_Placebo_wk1',max_significance = 0.05)
+
+#Interested in the Week 0 to 1 change at genus level
+fit_data = Maaslin2(
+    input_data_genus,Week1meta, output = 'R_scripts/Maaslin/Week0to1genuswk1plaref',
+    fixed_effects = c('Description','visAge'), random_effects = c('idno'),reference = 'Description,SAM_Placebo_wk1',max_significance = 0.05)
+
+fit_data = Maaslin2(
+    input_data_genus,Week1meta, output = 'R_scripts/Maaslin/Week0to1genuswk0amoxref',
+    fixed_effects = c('Description','visAge'), random_effects = c('idno'),reference = 'Description,SAM_Amoxicillin_wk0',max_significance = 0.05)
+
+#how about the differences between time 0 and time 104 for just placebo vs. amox?
+Week104to0<-subset(input_metadata, Week_of_follow_up==0|Week_of_follow_up==104)
+Week104to0<-subset(Week104to0, Treatment=="Amoxicillin"|Treatment=="Placebo")
+Week104<-subset(input_metadata, Week_of_follow_up==104)
+week104amoxpla<-subset(Week104, Treatment=="Amoxicillin"|Treatment=="Placebo")
+
+fit_data = Maaslin2(
+    input_data_species,Week104to0, output = 'R_scripts/Maaslin/Week0to104specieswk0plaref',
+    fixed_effects = c('Description','visAge'), random_effects = c('idno'),reference = 'Description,SAM_Placebo_wk0',max_significance = 0.05)
+
+fit_data = Maaslin2(
+    input_data_genus,Week104to0, output = 'R_scripts/Maaslin/Week0to104genuswk0plaref',
+    fixed_effects = c('Description','visAge'), random_effects = c('idno'),reference = 'Description,SAM_Placebo_wk0',max_significance = 0.05)
+
+#Only Week 0, 1, and 104
+Week0to1to104<-subset(input_metadata, Week_of_follow_up==0|Week_of_follow_up==1|Week_of_follow_up==104)
+fit_data = Maaslin2(
+    input_data_genus,Week0to1to104, output = 'R_scripts/Maaslin/Week0to1to104genuswk0ref',
+    fixed_effects = c('Description','visAge'), random_effects = c('idno'),reference = 'Description,SAM_Placebo_wk0',max_significance = 0.05)
+
+fit_data = Maaslin2(
+    input_data_species,Week104, output = 'R_scripts/Maaslin/Week104speciesplaref',
+    fixed_effects = c('Description','visAge'), reference = 'Description,SAM_Placebo_wk104', max_significance = 0.25)
+fit_data = Maaslin2(
+    input_data_genus,Week104, output = 'R_scripts/Maaslin/Week104genusplaref',
+    fixed_effects = c('Description','visAge'), reference = 'Description,SAM_Placebo_wk104', max_significance = 0.25)
+fit_data = Maaslin2(
+    input_data_family,Week104, output = 'R_scripts/Maaslin/Week104familyplaref',
+    fixed_effects = c('Description','visAge'), reference = 'Description,SAM_Placebo_wk104', max_significance = 0.25)
+fit_data = Maaslin2(
+    input_data_phylum,Week104, output = 'R_scripts/Maaslin/Week104phylumplaref',
+    fixed_effects = c('Description','visAge'), reference = 'Description,SAM_Placebo_wk104', max_significance = 0.25)
+
+fit_data = Maaslin2(
+    input_data_species,Week104, output = 'R_scripts/Maaslin/Week104speciesphealthyref',
+    fixed_effects = c('Description','visAge'), reference = 'Description,Healthy_NA_wk104', max_significance = 0.25)
+fit_data = Maaslin2(
+    input_data_species,Week104, output = 'R_scripts/Maaslin/Week104speciesSAMref',
+    fixed_effects = c('Description','visAge'), reference = 'Description,SAMcontrol_NA_wk104', max_significance = 0.25)
+
+fit_data = Maaslin2(
+    input_data_genus,Week104, output = 'R_scripts/Maaslin/Week104genushealthyref',
+    fixed_effects = c('Description','visAge'), reference = 'Description,Healthy_NA_wk104', max_significance = 0.25)
+fit_data = Maaslin2(
+    input_data_family,Week104, output = 'R_scripts/Maaslin/Week104familyhealthyref',
+    fixed_effects = c('Description','visAge'), reference = 'Description,Healthy_NA_wk104', max_significance = 0.25)
+fit_data = Maaslin2(
+    input_data_phylum,Week104, output = 'R_scripts/Maaslin/Week104phylumhealthyref',
+    fixed_effects = c('Description','visAge'), reference = 'Description,Healthy_NA_wk104', max_significance = 0.25)
+
+#Just week 104 what does age do with healthy samples
+healthy<-subset(Week104, Treatment=="Healthy")
+fit_data = Maaslin2(
+    input_data_genus,healthy, output = 'R_scripts/Maaslin/Week104healthygenus',
+    fixed_effects = c('visAge','visMUAC','visWHZ'), max_significance = 0.05)
+fit_data = Maaslin2(
+    input_data_family,healthy, output = 'R_scripts/Maaslin/Week104healhyfamily',
+    fixed_effects = c('visAge','visMUAC','visWHZ'), max_significance = 0.05)
+fit_data = Maaslin2(
+    input_data_phylum,healthy, output = 'R_scripts/Maaslin/Week104healhyphylum',
+    fixed_effects = c('visAge','visMUAC','visWHZ'), max_significance = 0.05)
+fit_data = Maaslin2(
+    input_data_species,healthy, output = 'R_scripts/Maaslin/Week104healhyspecies',
+    fixed_effects = c('visAge','visMUAC','visWHZ'), max_significance = 0.05)
+
+#how about the differences between time 1 and time 104 for just placebo vs. amox?
+Week104to1<-subset(input_metadata, Week_of_follow_up==1|Week_of_follow_up==104)
+Week104to1<-subset(Week104to1, Treatment=="Amoxicillin"|Treatment=="Placebo")
+fit_data = Maaslin2(
+    input_data_genus,Week104to1, output = 'R_scripts/Maaslin/Week1to104genus',
+    fixed_effects = c('Description','visMUAC','visWHZ','visdelMUAC','visdelWHZ','visAge'), random_effects = c('idno'),reference = 'Description,SAM_Placebo_wk1',)
+
+library(scales)
+
+#What about the first 12 weeks 
+first12week<-subset(input_metadata, Week_of_follow_up<14)
+#phylum level
+fit_data = Maaslin2(
+    input_data_phylum,first12week, output = 'R_scripts/Maaslin/First12weeksPhylum',
+    fixed_effects = c('Description','visMUAC','visWHZ','visdelMUAC','visdelWHZ','visAge'), random_effects = c('idno'), reference = 'Description,SAM_Placebo_wk0', max_significance = 0.25)
+#Family level
+fit_data = Maaslin2(
+    input_data_family,first12week, output = 'R_scripts/Maaslin/First12weeksFamily',
+    fixed_effects = c('Description','visMUAC','visWHZ','visdelMUAC','visdelWHZ','visAge'), random_effects = c('idno'), reference = 'Description,SAM_Placebo_wk0', max_significance = 0.25)
+#Genus level
+fit_data = Maaslin2(
+    input_data_genus,first12week, output = 'R_scripts/Maaslin/First12weeksGenus',
+    fixed_effects = c('Description','visMUAC','visWHZ','visdelMUAC','visdelWHZ','visAge'), random_effects = c('idno'), reference = 'Description,SAM_Placebo_wk0', max_significance = 0.25)
+#Species level
+fit_data = Maaslin2(
+    input_data_species,first12week, output = 'R_scripts/Maaslin/First12weeksSpecies',
+    fixed_effects = c('Description','visMUAC','visWHZ','visdelMUAC','visdelWHZ','visAge'), random_effects = c('idno'), reference = 'Description,SAM_Placebo_wk0', max_significance = 0.25)
+
+#Just the amoxicillin and placebo groups over time
+amoxipla<-subset(input_metadata, Treatment=="Amoxicillin"|Treatment=="Placebo")
+fit_data = Maaslin2(
+    input_data_species,amoxipla, output = 'R_scripts/Maaslin/justamoxplaspecies',
+    fixed_effects = c('Description','visMUAC','visWHZ','visdelMUAC','visdelWHZ','visAge'), random_effects = c('idno'), reference = 'Description,SAM_Placebo_wk104', max_significance = 0.05)
+
+fit_data = Maaslin2(
+    input_data_genus,amoxipla, output = 'R_scripts/Maaslin/justamoxplagenusplacebo104ref',
+    fixed_effects = c('Description','visMUAC','visWHZ','visdelMUAC','visdelWHZ','visAge'), random_effects = c('idno'), reference = "Description,SAM_Placebo_wk104", max_significance = 0.05)
+
+#Just to make sure no difference in week 0
+Week0<-subset(input_metadata, Week_of_follow_up==0)
+fit_data = Maaslin2(
+    input_data_genus,Week0, output = 'R_scripts/Maaslin/Week0only',
+    fixed_effects = c('Description','visAge'), max_significance = 0.05)
+```
+
+```{r}
+#Plot significant results as coefficient plot. 
+wk0to1genusmaaslinsigwk0amoxref <- read.csv('R_scripts/Maaslin/Week0to1genuswk0amoxref/wk0to1genussignificant_resultswk0amoxref.tsv', sep='')
+wk0to1genusmaaslinsigwk1plaref<-read.csv('R_scripts/Maaslin/Week0to1genuswk1plaref/wk0to1genussignificant_resultswk1plaref.tsv', sep='')
+wk0to1genussigcombined<-rbind(wk0to1genusmaaslinsigwk0amoxref,wk0to1genusmaaslinsigwk1plaref)
+#Description only
+wk0to1genussigcombinedDescription<-subset(wk0to1genussigcombined, metadata=="Description")
+#Sort by descending coefficient (doesn't actually relevel factors though)
+wk0to1genussigcombinedDescription <- wk0to1genussigcombinedDescription %>% arrange(desc(coef))
+
+#COEFFICIENT PLOT
+wk0to1genussigcombinedDescription$CI95upper <- wk0to1genussigcombinedDescription$coef + 1.96*wk0to1genussigcombinedDescription$stderr
+wk0to1genussigcombinedDescription$CI95lower <- wk0to1genussigcombinedDescription$coef - 1.96*wk0to1genussigcombinedDescription$stderr
+wk0to1genussigcombinedDescription$Interaction<-paste(wk0to1genussigcombinedDescription$feature,wk0to1genussigcombinedDescription$ref)
+
+wk0to1genussigcombinedDescription$feature=factor(wk0to1genussigcombinedDescription$feature, levels=wk0to1genussigcombinedDescription$feature[order(wk0to1genussigcombinedDescription$coef)])
+
+wk0to1genussigcombinedDescription$feature<-factor(wk0to1genussigcombinedDescription$feature, levels=c("g__Streptococcus","g__Lactobacillus","g__Bifidobacterium","g__Dorea","g__Holdemanella","g__Klebsiella","g__Escherichia"))
+
+ggplot(wk0to1genussigcombinedDescription, aes(x=coef, y=feature, color=as.factor(coef<0)))+
+  geom_point()+facet_grid(cols = vars(ref))+
+  geom_errorbarh(aes(xmax = CI95upper, xmin = CI95lower, height =0.1))+
+  geom_vline(xintercept = 0, linetype='dotted', color='grey', size=1.5)+
+  #scale_color_brewer(palette ='Dark2')+
+  theme_classic()+
+  theme(axis.text.y = element_text(size=10),
+        axis.text.x = element_text(size=15),
+        axis.title.x = element_text(size=15),
+        axis.title.y = element_blank(),
+        legend.position = "none",
+        plot.title = element_text(size=15),
+        panel.border = element_rect(fill=NA, colour="black", size=3))+
+  xlab('coefficient')+scale_color_manual(values = c("#E31A1C","#1F78B4"))
+ggsave('220805_week0to1genussignificantall.pdf')
+# write.csv(diffspecies.a.df2, '220612_Mphln3_NEGBIN/220612_diffspecies_coeff.csv')
+
+#Now plotting overall differences referrent to week 104 placebo
+significantresultsweek104plaref<-read.csv('R_scripts/Maaslin/Description_Specieswk104plaref/significant_resultswk104plaref.tsv', sep='')
+
+#Just week 104 amox
+week104amoxsigspecies<-subset(significantresultsweek104plaref, value=="SAM_Amoxicillin_wk104")
+week104amoxsigspecies$CI95upper <- week104amoxsigspecies$coef + 1.96*week104amoxsigspecies$stderr
+week104amoxsigspecies$CI95lower <- week104amoxsigspecies$coef - 1.96*week104amoxsigspecies$stderr
+week104amoxsigspecies$feature=factor(week104amoxsigspecies$feature, levels=week104amoxsigspecies$feature[order(week104amoxsigspecies$coef)])
+
+ggplot(week104amoxsigspecies, aes(x=coef, y=feature, color=as.factor(coef<0)))+
+  geom_point()+
+  geom_errorbarh(aes(xmax = CI95upper, xmin = CI95lower, height =0.1))+
+  geom_vline(xintercept = 0, linetype='dotted', color='grey', size=1.5)+
+  #scale_color_brewer(palette ='Dark2')+
+  theme_classic()+
+  theme(axis.text.y = element_text(size=10),
+        axis.text.x = element_text(size=15),
+        axis.title.x = element_text(size=15),
+        axis.title.y = element_blank(),
+        legend.position = "none",
+        plot.title = element_text(size=15),
+        panel.border = element_rect(fill=NA, colour="black", size=3))+
+  xlab('coefficient')+scale_color_manual(values = c("#E31A1C","#1F78B4"))
+ggsave('220818_week104amoxtoplacebosigspecies.pdf')
+# write.csv(diffspecies.a.df2, '220612_Mphln3_NEGBIN/220612_diffspecies_coeff.csv')
+
+#Now plotting overall differences referrent to week 104 nonSAM
+significantresultsweek104healthyref<-read.csv('R_scripts/Maaslin/Description_Specieshealthywk104ref/significant_resultswk104healthyref.tsv', sep='')
+
+#Just week 104 placebo
+week104plasigspecies<-subset(significantresultsweek104healthyref, value=="SAM_Placebo_wk104")
+week104plasigspecies$CI95upper <- week104plasigspecies$coef + 1.96*week104plasigspecies$stderr
+week104plasigspecies$CI95lower <- week104plasigspecies$coef - 1.96*week104plasigspecies$stderr
+week104plasigspecies$feature=factor(week104plasigspecies$feature, levels=week104plasigspecies$feature[order(week104plasigspecies$coef)])
+
+ggplot(week104plasigspecies, aes(x=coef, y=feature, color=as.factor(coef<0)))+
+  geom_point()+
+  geom_errorbarh(aes(xmax = CI95upper, xmin = CI95lower, height =0.1))+
+  geom_vline(xintercept = 0, linetype='dotted', color='grey', size=1.5)+
+  #scale_color_brewer(palette ='Dark2')+
+  theme_classic()+
+  theme(axis.text.y = element_text(size=10),
+        axis.text.x = element_text(size=15),
+        axis.title.x = element_text(size=15),
+        axis.title.y = element_blank(),
+        legend.position = "none",
+        plot.title = element_text(size=15),
+        panel.border = element_rect(fill=NA, colour="black", size=3))+
+  xlab('coefficient')+scale_color_manual(values = c("#1F78B4","#00FF00"))
+ggsave('221016_week104placebotohealthysigspecies.pdf')
+
+```
+
+
+```{r}
+#Transpose and then edit Humann3 datatables
+#Humann_KEGG<-read.delim("Humann3datatables/genefamilies_joinCPM_KEGG_filtered.tsv", sep="\t", header = TRUE)
+#t_Humann_KEGG<-t(Humann_KEGG)
+#write.csv(t_Humann_KEGG, "Humann3datatables/genefamilies_joinCPM_KEGG_filtered_transpose.csv")
+#Humann_metacyc<-read.delim("Humann3datatables/genefamilies_joinCPM_metacyc_filtered.tsv", sep="\t", header = TRUE)
+#t_Humann_metacyc<-t(Humann_metacyc)
+#write.csv(t_Humann_metacyc, "Humann3datatables/genefamilies_joinCPM_metacyc_filtered_transpose.csv")
+#Humann3_pathways<-read.delim("Humann3datatables/Pathwayabundance_joinCPM_filtered.tsv", sep="\t", header=TRUE)
+#t_Humann3_pathways<-t(Humann3_pathways)
+#write.csv(t_Humann3_pathways, "Humann3datatables/Pathwayabundance_joinCPM_filtered_transpose.csv")
+
+Humann3_KEGG<-read.delim("Humann3datatables/genefamilies_joinCPM_KEGG_filtered_transpose.csv", sep = ",")
+Humann3_KEGG<-data.frame(Humann3_KEGG, row.names = 1)
+Humann3_metacyc<-read.delim("Humann3datatables/genefamilies_joinCPM_metacyc_filtered_transpose.csv", sep = ",")
+Humann3_metacyc<-data.frame(Humann3_metacyc, row.names = 1)
+Humann3_pathwayabundance<-read.delim("Humann3datatables/Pathwayabundance_joinCPM_filtered_transpose.csv", sep = ",")
+Humann3_pathwayabundance<-data.frame(Humann3_pathwayabundance, row.names = 1)
+
+# #KEGG pathways associated with Description
+# fit_data = Maaslin2(
+#     Humann3_KEGG,input_metadata, output = 'R_scripts/Maaslin/Humann3/Description',
+#     fixed_effects = c('Description'), random_effects = c('idno'), transform = "AST", reference = 'Description, SAM_Placebo_wk0', max_significance = 0.05)
+# 
+# ##Subset only for timepoint 104
+# input_metadata_timepoint104<-input_metadata[which(input_metadata$Week_of_follow_up=='104'),]
+# fit_data = Maaslin2(
+#     Humann3_KEGG,input_metadata_timepoint104, output = 'R_scripts/Maaslin/Humann3/Descriptionwk104',
+#     fixed_effects = c('Description'), transform = "AST", reference = 'Description,SAMPlacebo_wk104', max_significance = 0.1, plot_heatmap = TRUE)
+# 
+# #Metacyc pathways associated with Description
+# fit_data = Maaslin2(
+#     Humann3_metacyc,input_metadata, output = 'R_scripts/Maaslin/Humann3/Description/metacyc',
+#     fixed_effects = c('Description'), random_effects = c('idno'), transform = "AST", reference = 'Description, SAM_Placebo_wk0', max_significance = 0.05)
+# #Metacyc pathways week 104 only
+# fit_data = Maaslin2(
+#     Humann3_metacyc,input_metadata_timepoint104, output = 'R_scripts/Maaslin/Humann3/Descriptionwk104/metacyc',
+#     fixed_effects = c('Description', 'SAGE'), transform = "AST", reference = 'Description,SAMPlacebo_wk104', max_significance = 0.05)
+#Pathway abundance for description
+fit_data = Maaslin2(
+    Humann3_pathwayabundance,input_metadata, output = 'R_scripts/Maaslin/Humann3/DescriptionPathwayabundance',
+    fixed_effects = c('Description','visMUAC','visWHZ','visdelMUAC','visdelWHZ','visAge'), random_effects = c('idno'), reference = "Description,SAM_Placebo_wk0", max_significance = 0.05)
+
+#Pathway abundance for description wk104
+fit_data = Maaslin2(
+    Humann3_pathwayabundance,input_metadata, output = 'R_scripts/Maaslin/Humann3/DescriptionPathwayabundancewk104plaref',
+    fixed_effects = c('Description','visMUAC','visWHZ','visdelMUAC','visdelWHZ','visAge'), transform = "AST", reference = 'Description,SAM_Placebo_wk104', max_significance = 0.05)
+```
+
+```{r}
+#Maaslin2 on ARG RPKM
+fit_data = Maaslin2(
+    input_ARGs,input_metadata, output = 'R_scripts/Maaslin/ARGsrefplacebowk1ShortbredID',
+    fixed_effects = c('Description','visAge','visMUAC','visWHZ','visdelMUAC','visdelWHZ'), random_effects = c('idno'), reference = 'Description,SAM_Placebo_wk1', max_significance = 0.05)
+
+fit_data = Maaslin2(
+    input_ARGs,input_metadata, output = 'R_scripts/Maaslin/ARGsrefamoxwk0ShortbredID',
+    fixed_effects = c('Description','visAge','visMUAC','visWHZ','visdelMUAC','visdelWHZ'), random_effects = c('idno'), reference = 'Description,SAM_Amoxicillin_wk0', max_significance = 0.05)
+
+fit_data = Maaslin2(
+    input_ARGs,input_metadata, output = 'R_scripts/Maaslin/ARGsrefplawk104ShortbredID',
+    fixed_effects = c('Description','visAge','visMUAC','visWHZ','visdelMUAC','visdelWHZ'), random_effects = c('idno'), reference = 'Description,SAM_Placebo_wk104', max_significance = 0.05)
+
+#Plot significant results as coefficient plot. 
+ARGSignificantwk1pla <- read.csv('R_scripts/Maaslin/ARGsrefplacebowk1ShortbredID/ARGs_refPlacebowk1_significant_results.tsv', sep='\t')
+
+#Week 1 amox
+Week1ARG<-subset(ARGSignificantwk1pla, value=="SAM_Amoxicillin_wk1")
+
+
+#COEFFICIENT PLOT
+Week1ARG$CI95upper <- as.numeric(Week1ARG$coef) + 1.96*as.numeric(Week1ARG$stderr)
+Week1ARG$CI95lower <- as.numeric(Week1ARG$coef) - 1.96*as.numeric(Week1ARG$stderr)
+
+#Reorder
+Week1ARG$Product_Name=factor(Week1ARG$Product_Name, levels=Week1ARG$Product_Name[order(Week1ARG$coef)])
+
+ggplot(Week1ARG, aes(x=coef, y=Product_Name, color=as.factor(coef<0)))+
+  geom_point()+
+  geom_errorbarh(aes(xmax = CI95upper, xmin = CI95lower, height =0.1))+
+  geom_vline(xintercept = 0, linetype='dotted', color='grey', size=1.5)+
+  #scale_color_brewer(palette ='Dark2')+
+  theme_classic()+
+  theme(axis.text.y = element_text(size=10),
+        axis.text.x = element_text(size=15),
+        axis.title.x = element_text(size=15),
+        axis.title.y = element_blank(),
+        legend.position = "none",
+        plot.title = element_text(size=15),
+        panel.border = element_rect(fill=NA, colour="black", size=3))+
+  xlab('coefficient')+scale_color_manual(values = c("#E31A1C","#1F78B4"))
+ggsave('2021Figs/220818_ARGweek1Amox.pdf', width=50, height=25, units='cm')
+
+
+```
+
+
+```{r}
