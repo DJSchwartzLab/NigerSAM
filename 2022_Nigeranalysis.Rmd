@@ -7,7 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_knit$set(root.dir ="/Users/drewschwartz/Box Sync/2022_DrewAmy_NigerSAMAbxMicrobiome")
+knitr::opts_knit$set(root.dir ="/Users/drewschwartz/Box Sync/2023_LancetMicrobe_NigerSAMAbxMicrobiome")
 ```
 
 ```{r}
@@ -30,7 +30,7 @@ library(anthro)
 library(randomForest)
 library(ggExtra)
 
-metadata <- read.delim(sep=',',"210615_Nigermetadata.csv",header=TRUE,stringsAsFactors = F)
+metadata <- read.delim(sep=',',"230717_Nigermetadata.csv",header=TRUE,stringsAsFactors = F)
 #Remove anything under 200K reads
 metadata = metadata[which(metadata$Post.processed_readcount > 200000),]
 metadata = metadata[which(!metadata$Treatment %in% c("Control")),]
@@ -1385,12 +1385,18 @@ pairwise.wilcox.test(metadatatime0$BAGE, metadatatime0$Treatment)
 #p = 0.87
 median(time0amox$BAGE)
 #11
+summary(time0amox$BAGE)
+ # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ #   6.00    8.00   11.00   16.66   21.50   49.00 
 IQR(time0amox$BAGE)
 #13.5
 median(time0placebo$BAGE)
 #11.5
 IQR(time0placebo$BAGE)
 #11.5
+summary(time0placebo$BAGE)
+ # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ #   6.00    8.00   11.50   14.09   19.50   40.00 
 table(time0amox$BSEX)
 #16M and 19F (%M = 46%)
 table(time0placebo$BSEX)
@@ -1403,20 +1409,33 @@ median(time0amox$BMUAC)
 #11.3
 IQR(time0amox$BMUAC)
 #0.4
+summary(time0amox$BMUAC)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#    9.20   11.00   11.30   11.16   11.40   12.10 
 median(time0placebo$BMUAC)
 #11.15
 IQR(time0placebo$BMUAC)
 #0.6
+summary(time0placebo$BMUAC)
+   # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   # 9.50   10.80   11.15   11.14   11.40   12.30 
 pairwise.wilcox.test(metadatatime0$BWFHZ, metadatatime0$Treatment)
 #p=0.73
 median(time0amox$BWFHZ)
 #-3.17
 IQR(time0amox$BWFHZ)
 #0.595
+summary(time0amox$BWFHZ)
+ #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ # -4.730  -3.380  -3.170  -3.140  -2.785  -1.790 
 median(time0placebo$BWFHZ)
 #-3.115
 IQR(time0placebo$BWFHZ)
 #0.835
+summary(time0placebo$BWFHZ)
+ # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ # -4.170  -3.482  -3.115  -3.046  -2.647  -1.240
+
 
 pairwise.wilcox.test(metadatatime1$visAge, metadatatime1$Treatment)
 #p = 0.75
@@ -1424,10 +1443,18 @@ median(time1amox$visAge)
 #12.25
 IQR(time1amox$visAge)
 #13
+summary(time1amox$visAge)
+ # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ #   6.25    8.25   12.25   17.02   21.25   49.25 
+time1amox$visAge[order(time1amox$visAge)]
 median(time1placebo$visAge)
 #12.25
 IQR(time1placebo$visAge)
 #11
+summary(time1placebo$visAge)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#    7.25    8.25   12.25   14.64   19.25   40.25 
+time1placebo$visAge[order(time1placebo$visAge)]
 table(time1amox$BSEX)
 #17M and 22F (%M = 44%)
 table(time1placebo$BSEX)
@@ -1440,41 +1467,64 @@ median(time1amox$visMUAC)
 #11.7
 IQR(time1amox$visMUAC)
 #0.65
+summary(time1amox$visMUAC)
+ # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ #   9.40   11.35   11.70   11.61   12.00   13.00 
 median(time1placebo$visMUAC)
 #11.4
 IQR(time1placebo$visMUAC)
 #0.8
+summary(time1placebo$visMUAC)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#   10.30   11.00   11.40   11.42   11.80   12.60 
 pairwise.wilcox.test(metadatatime1$visdelMUAC, metadatatime1$Treatment)
 #p=0.02
 median(time1amox$visdelMUAC)
 #0.4
 IQR(time1amox$visdelMUAC)
 #0.3
+summary(time1amox$visdelMUAC)
+ # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ #  0.000   0.300   0.400   0.441   0.600   1.200 
 median(time1placebo$visdelMUAC)
 #0.3
 IQR(time1placebo$visdelMUAC)
 #0.4
+summary(time1placebo$visdelMUAC)
+#   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+# -0.3000  0.0000  0.3000  0.3091  0.4000  1.3000 
 pairwise.wilcox.test(metadatatime1$visWHZ, metadatatime1$Treatment)
 #p=0.23
 median(time1amox$visWHZ)
 #-2.13
 IQR(time1amox$visWHZ)
 #0.795
+summary(time1amox$visWHZ)
+ #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ # -4.050  -2.490  -2.130  -1.985  -1.695   1.050 
 median(time1placebo$visWHZ)
 #-2.19
 IQR(time1placebo$visWHZ)
 #1.29
+summary(time1placebo$visWHZ)
+ # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ # -3.940  -3.060  -2.190  -2.261  -1.770   0.540 
 pairwise.wilcox.test(metadatatime1$visdelWHZ, metadatatime1$Treatment)
 #p=0.02
 median(time1amox$visdelWHZ)
 #1.06
 IQR(time1amox$visdelWHZ)
 #0.595
+summary(time1amox$visdelWHZ)
+ # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ #  0.160   0.795   1.060   1.163   1.390   5.780 
 median(time1placebo$visdelWHZ)
 #0.63
 IQR(time1placebo$visdelWHZ)
 #0.97
-
+summary(time1placebo$visdelWHZ)
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+# -0.5300  0.1700  0.6300  0.6739  1.1400  2.0100 
 
 
 pairwise.wilcox.test(metadatatime4$visAge, metadatatime4$Treatment)
@@ -1483,12 +1533,20 @@ median(time4amox$visAge)
 #12
 IQR(time4amox$visAge)
 #11
+summary(time4amox$visAge)
+  # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  #  7.00    9.00   12.00   16.03   20.00   50.00
+time4amox$visAge[order(time4amox$visAge)]
 median(time4placebo$visAge)
 #12
 IQR(time4placebo$visAge)
 #12
+summary(time4placebo$visAge)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#    7.00    9.00   12.00   16.05   21.00   41.00 
+time4placebo$visAge[order(time4placebo$visAge)]
 table(time4amox$BSEX)
-#14M and 21F (%M = 44%)
+#14M and 21F (%M = 40%)
 table(time4placebo$BSEX)
 #26M and 17F (%M = 64%)
 chisq.test(metadatatime4$BSEX, metadatatime4$Treatment)
@@ -1499,51 +1557,83 @@ median(time4amox$visMUAC)
 #12
 IQR(time4amox$visMUAC)
 #0.55
+summary(time4amox$visMUAC)
+ # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ #   9.40   11.75   12.00   11.94   12.30   13.60 
 median(time4placebo$visMUAC)
 #11.6
 IQR(time4placebo$visMUAC)
 #1.15
+summary(time4placebo$visMUAC)
+ # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ #  10.30   11.20   11.60   11.78   12.35   13.80 
 pairwise.wilcox.test(metadatatime4$visWHZ, metadatatime4$Treatment)
 #p=0.43
 median(time4amox$visWHZ)
 #-1.43
 IQR(time4amox$visWHZ)
 #1.155
+summary(time4amox$visWHZ)
+ # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ # -3.820  -1.930  -1.430  -1.503  -0.775   0.070
 median(time4placebo$visWHZ)
 #-1.6
 IQR(time4placebo$visWHZ)
 #1.25
+summary(time4placebo$visWHZ)
+ #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ # -3.830  -2.265  -1.600  -1.577  -1.015   1.670
 pairwise.wilcox.test(as.numeric(metadatatime4$visdelMUAC), metadatatime4$Treatment)
 #p=0.44
 median(time4amox$visdelMUAC)
 #0.7
 IQR(time4amox$visdelMUAC)
 #0.5
+summary(time4amox$visdelMUAC)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#   -0.20    0.50    0.70    0.78    1.00    1.70 
 median(time4placebo$visdelMUAC)
 #0.6
 IQR(time4placebo$visdelMUAC)
 #0.85
+summary(time4placebo$visdelMUAC)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#  -0.500   0.200   0.600   0.686   1.050   1.600 
 pairwise.wilcox.test(as.numeric(metadatatime4$visdelWHZ), metadatatime4$Treatment)
 #p=0.27
 median(time4amox$visdelWHZ)
 #1.46
 IQR(time4amox$visdelWHZ)
 #0.815
+summary(time4amox$visdelWHZ)
+ # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ # -0.500   1.135   1.460   1.533   1.950   2.880 
 median(time4placebo$visdelWHZ)
 #1.28
 IQR(time4placebo$visdelWHZ)
 #1.195
-
+summary(time4placebo$visdelWHZ)
+ # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ # -0.740   0.835   1.280   1.390   2.030   4.720
+ 
 pairwise.wilcox.test(metadatatime8$visAge, metadatatime8$Treatment)
 #p = 0.37
 median(time8amox$visAge)
 #14
 IQR(time8amox$visAge)
 #12
+summary(time8amox$visAge)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#     8.0    12.0    14.0    19.2    24.0    51.0 
+time8amox$visAge[order(time8amox$visAge)]
 median(time8placebo$visAge)
 #13
 IQR(time8placebo$visAge)
 #13
+summary(time8placebo$visAge)
+  # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  #  8.00   10.00   13.00   17.19   23.00   42.00 
+time8placebo$visAge[order(time8placebo$visAge)]
 table(time8amox$BSEX)
 #14M and 16F (%M = 47%)
 table(time8placebo$BSEX)
@@ -1556,41 +1646,64 @@ median(as.numeric(time8amox$visMUAC))
 #12.5
 IQR(time8amox$visMUAC)
 #0.775
+summary(time8amox$visMUAC)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#   11.80   12.22   12.50   12.66   13.00   13.70
 median(time8placebo$visMUAC, na.rm = TRUE)
 #11.9
 IQR(time8placebo$visMUAC, na.rm = TRUE)
 #0.4
+summary(time8placebo$visMUAC)
+   # Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+   # 9.80   11.70   11.90   11.87   12.10   13.30       1 
 pairwise.wilcox.test(metadatatime8$visWHZ, metadatatime8$Treatment, na.rm = TRUE)
 #0.024
 median(time8amox$visWHZ)
 #-1.02
 IQR(time8amox$visWHZ)
 #0.9075
+summary(time8amox$visWHZ)
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+# -1.9800 -1.2525 -1.0200 -0.8763 -0.3450  0.3900 
 median(time8placebo$visWHZ, na.rm = TRUE)
 #-1.415
 IQR(time8placebo$visWHZ, na.rm = TRUE)
 #1.05
+summary(time8placebo$visWHZ)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+#  -3.860  -1.645  -1.415  -1.240  -0.595   2.610       1 
 pairwise.wilcox.test(as.numeric(metadatatime8$visdelMUAC), metadatatime8$Treatment, na.rm = TRUE)
 #p=0.018
 median(as.numeric(time8amox$visdelMUAC))
 #1.15
 IQR(time8amox$visdelMUAC)
 #0.6
+summary(time8amox$visdelMUAC)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#   0.500   1.000   1.150   1.277   1.600   2.200
 median(time8placebo$visdelMUAC, na.rm = TRUE)
 #0.9
 IQR(time8placebo$visdelMUAC, na.rm = TRUE)
 #0.725
+summary(time8placebo$visdelMUAC)
+#   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+# -0.6000  0.6250  0.9000  0.9077  1.3500  2.4000       1 
 pairwise.wilcox.test(metadatatime8$visdelWHZ, metadatatime8$Treatment, na.rm = TRUE)
 #0.04
 median(time8amox$visdelWHZ)
 #2.275
 IQR(time8amox$visdelWHZ)
 #0.9225
+summary(time8amox$visdelWHZ)
+ # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ #  0.650   1.798   2.275   2.204   2.720   3.170
 median(time8placebo$visdelWHZ, na.rm = TRUE)
 #1.67
 IQR(time8placebo$visdelWHZ, na.rm = TRUE)
 #1.63
-
+summary(time8placebo$visdelWHZ)
+ #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+ # -0.410   0.855   1.670   1.661   2.485   5.160       1 
 
 pairwise.wilcox.test(metadatatime12$visAge, metadatatime12$Treatment)
 #p = 0.04
@@ -1598,10 +1711,18 @@ median(time12amox$visAge)
 #15
 IQR(time12amox$visAge)
 #13
+summary(time12amox$visAge)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#    9.00   12.00   15.00   19.56   25.00   52.00 
+time12amox$visAge[order(time12amox$visAge)]
 median(time12placebo$visAge)
 #13
 IQR(time12placebo$visAge)
 #7.5
+summary(time12placebo$visAge)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#    9.00   11.00   13.00   16.44   18.50   51.00 
+time12placebo$visAge[order(time12placebo$visAge)]
 table(time12amox$BSEX)
 #19M and 22F (%M = 46%)
 table(time12placebo$BSEX)
@@ -1614,41 +1735,64 @@ median(time12amox$visMUAC)
 #12.5
 IQR(time12amox$visMUAC)
 #1.2
+summary(time12amox$visMUAC)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#    11.2    12.2    12.5    12.7    13.4    14.5 
 median(time12placebo$visMUAC)
 #12.3
 IQR(time12placebo$visMUAC)
 #0.775
+summary(time12placebo$visMUAC)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#   11.00   11.82   12.30   12.28   12.60   13.60
 pairwise.wilcox.test(metadatatime12$visWHZ, metadatatime12$Treatment)
 #p=0.46
 median(time12amox$visWHZ)
 #-0.66
 IQR(time12amox$visWHZ)
 #1.27
+summary(time12amox$visWHZ)
+#  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+# -2.4600 -1.4800 -0.6600 -0.7085 -0.2100  1.5600
 median(time12placebo$visWHZ)
 #-1.065
 IQR(time12placebo$visWHZ)
 #1.0125
+summary(time12placebo$visWHZ)
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+# -2.9000 -1.3900 -1.0650 -0.8588 -0.3775  1.6800 
 pairwise.wilcox.test(as.numeric(metadatatime12$visdelMUAC), metadatatime12$Treatment)
 #p=0.18
 median(time12amox$visdelMUAC)
 #1.3
 IQR(time12amox$visdelMUAC)
 #1
+summary(time12amox$visdelMUAC)
+# min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#  -0.100   0.900   1.300   1.388   1.900   3.500
 median(time12placebo$visdelMUAC)
 #1.1
 IQR(time12placebo$visdelMUAC)
 #0.75
+summary(time12placebo$visdelMUAC)
+ #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ # -0.100   0.725   1.100   1.174   1.475   2.800 
 pairwise.wilcox.test(metadatatime12$visdelWHZ, metadatatime12$Treatment)
 #p=0.093
 median(time12amox$visdelWHZ)
 #2.28
 IQR(time12amox$visdelWHZ)
 #1.41
+summary(time12amox$visdelWHZ)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#    0.72    1.65    2.28    2.36    3.06    4.05 
 median(time12placebo$visdelWHZ)
 #1.965
 IQR(time12placebo$visdelWHZ)
 #1.1425
-
+summary(time12placebo$visdelWHZ)
+ #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ # -1.120   1.435   1.965   1.946   2.578   4.060 
 pairwise.wilcox.test(metadatatime104$SAGE, metadatatime104$Treatment, p.adjust.method = "BH")
 #             Amoxicillin Healthy Placebo
 #Healthy    1.5e-06     -       -      
@@ -1657,24 +1801,40 @@ pairwise.wilcox.test(metadatatime104$SAGE, metadatatime104$Treatment, p.adjust.m
 
 median(time104amox$SAGE, na.rm = TRUE)
 #36
+summary(time104amox$SAGE)
+ # Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+ #  30.00   32.00   36.00   41.14   46.00   76.00       1 
+time104amox$SAGE[order(time104amox$SAGE)]
 IQR(time104amox$SAGE, na.rm = TRUE)
 #24
 median(time104placebo$SAGE,na.rm = TRUE)
 #38.5
 IQR(time104placebo$SAGE, na.rm = TRUE)
 #9.25
+summary(time104placebo$SAGE)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+#   32.00   34.00   38.50   38.92   43.25   48.00       1 
+time104placebo$SAGE[order(time104placebo$SAGE)]
 median(time104healthy$SAGE)
 #12
 IQR(time104healthy$SAGE)
 #13
+summary(time104healthy$SAGE)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#    6.00    9.00   12.00   16.68   22.00   50.00 
+time104healthy$SAGE[order(time104healthy$SAGE)]
 median(time104SAM$SAGE)
 #10.5
 IQR(time104SAM$SAGE)
 #5.5
-table(time104amox$SSEX)
-#10M and 11F (48%M)
-table(time104placebo$SSEX)
-#8M and 4F (67%M)
+summary(time104SAM$SAGE)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#    6.00    8.50   10.50   12.33   14.00   24.00 
+time104SAM$SAGE[order(time104SAM$SAGE)]
+table(time104amox$BSEX)
+#10M and 12F (48%M)
+table(time104placebo$BSEX)
+#9M and 4F (67%M)
 table(time104healthy$SSEX)
 #21M and 17F (55%M)
 table(time104SAM$SSEX)
@@ -1691,20 +1851,32 @@ median(time104amox$visdelMUAC, na.rm = TRUE)
 #3.7
 IQR(time104amox$visdelMUAC,na.rm = TRUE)
 #1.4
+summary(time104amox$visdelMUAC)
+  # Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+  # 1.800   2.800   3.700   3.838   4.200   8.600       1 
 median(time104placebo$visdelMUAC,na.rm = TRUE)
 #3.45
 IQR(time104placebo$visdelMUAC, na.rm = TRUE)
 #1.375
+summary(time104placebo$visdelMUAC)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+#   1.600   2.625   3.450   3.400   4.000   6.000       1 
 pairwise.wilcox.test(metadatatime104amoxpla$visdelWHZ, metadatatime104amoxpla$Treatment)
 #p=0.38
 median(time104amox$visdelWHZ, na.rm = TRUE)
 #3.29
 IQR(time104amox$visdelWHZ, na.rm = TRUE)
 #1.49
+summary(time104amox$visdelWHZ)
+  # Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+  # 1.850   2.330   3.290   3.208   3.820   5.310       1 
 median(time104placebo$visdelWHZ, na.rm = TRUE)
 #3.08
 IQR(time104placebo$visdelWHZ, na.rm = TRUE)
 #1.6175
+summary(time104placebo$visdelWHZ)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+#   1.240   1.920   3.080   2.834   3.538   4.560       1 
 pairwise.wilcox.test(metadatatime104amoxpla$visMUAC, metadatatime104amoxpla$Treatment)
 #p=0.22
 pairwise.wilcox.test(metadatatime104amoxpla$visWHZ, metadatatime104amoxpla$Treatment)
@@ -1720,19 +1892,31 @@ median(time104amox$SMUAC, na.rm = TRUE)
 #14.6
 IQR(time104amox$SMUAC, na.rm = TRUE)
 #1.4
+summary(time104amox$SMUAC)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+#   13.00   14.00   14.60   14.99   15.40   19.60       1 
 median(time104placebo$SMUAC, na.rm = TRUE)
 #14
 IQR(time104placebo$SMUAC, na.rm = TRUE)
 #0.9
+summary(time104placebo$SMUAC)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+#   13.00   13.75   14.00   14.40   14.65   16.80       1 
 median(time104healthy$SMUAC)
 #13.9
 IQR(time104healthy$SMUAC)
 #1.35
+summary(time104healthy$SMUAC)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#   12.60   13.45   13.90   14.18   14.80   16.40
 median(time104SAM$SMUAC)
 #11.65
 IQR(time104SAM$SMUAC)
 #0.625
-
+summary(time104SAM$SMUAC)
+# min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#   11.20   11.45   11.65   11.73   12.07   12.30 
+  
 pairwise.wilcox.test(metadatatime104$SZWFL, metadatatime104$Treatment, p.adjust.method = "BH")
 #           Amoxicillin Healthy Placebo
 # Healthy    0.09422     -       -      
@@ -1743,18 +1927,30 @@ median(time104amox$SZWFL, na.rm = TRUE)
 #-0.21
 IQR(time104amox$SZWFL, na.rm = TRUE)
 #1.8
+summary(time104amox$SZWFL)
+#   Min.   1st Qu.    Median      Mean   3rd Qu.      Max.      NA's 
+# -1.370000 -0.920000 -0.210000  0.003333  0.880000  2.370000         1 
 median(time104placebo$SZWFL, na.rm = TRUE)
 #-0.23
 IQR(time104placebo$SZWFL, na.rm = TRUE)
 #1.415
+summary(time104placebo$SZWFL)
+#   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+# -2.2800 -1.1225 -0.2300 -0.3700  0.2925  1.4700       1 
 median(time104healthy$SZWFL, na.rm = TRUE)
 #-0.99
 IQR(time104healthy$SZWFL, na.rm = TRUE)
 #1.845
+summary(time104healthy$SZWFL)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+# -2.2700 -1.3475 -0.9900 -0.5287  0.4975  1.6600
 median(time104SAM$SZWFL, na.rm = TRUE)
 #-3.23
 IQR(time104SAM$SZWFL, na.rm = TRUE)
 #0.16
+summary(time104SAM$SZWFL)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#  -3.550  -3.303  -3.230  -3.223  -3.143  -2.890 
 
 wilcox.test(as.numeric(metadatatime104$delZWFL)~metadatatime104$Treatment, p.adjust.method = "BH",na.rm = TRUE)
 median(time104amox$delZWFL, na.rm = TRUE)
@@ -1838,7 +2034,7 @@ ggsave(file="2021Figs/221122_visdelWHZ.pdf")
 Specieswidemeta<-join(metadata, Specieswide)
 Week104speciesmeta<-subset(Specieswidemeta, Week_of_follow_up==104)
 .rowNamesDF(Specieswidemeta)<-Specieswidemeta$Sample
-Specieswidemeta<-Specieswidemeta[-c(1:212)]
+Specieswidemeta<-Specieswidemeta[-c(1:213)]
 
 Bray <-vegdist(Specieswidemeta, method = "bray")
 pco.brayDF<-pco(Bray, k=4)
@@ -1864,7 +2060,7 @@ ggplot(BrayDFmeta, aes(x=V1, y=V2, color=Treatment, shape=as.factor(Week_of_foll
 Specieswidemeta<-join(metadata, Specieswide)
 amoxpla<-subset(Specieswidemeta, Treatment=="Amoxicillin"|Treatment=="Placebo")
 .rowNamesDF(amoxpla)<-amoxpla$Sample
-amoxpla<-amoxpla[-c(1:212)]
+amoxpla<-amoxpla[-c(1:213)]
 
 Brayamoxpla <-vegdist(amoxpla, method = "bray")
 pco.brayDFamoxpla<-pco(Brayamoxpla, k=4)
@@ -1876,22 +2072,22 @@ BrayDFamoxpla<-join(BrayDFamoxpla, metadata, by = "Sample")
 
 ### Eigenvalues for amox pla data##
 EigenBrayamoxpla<- rbind(SD = sqrt(pco.brayDFamoxpla$eig),Proportion = pco.brayDFamoxpla$eig/sum(pco.brayDFamoxpla$eig),Cumulative = cumsum(pco.brayDFamoxpla$eig)/sum(pco.brayDFamoxpla$eig))
-#V1 = 23.3 and V2 = 11.6
+#V1 = 23.3 and V2 = 11.7
 BrayDF$Sample=NULL
 
 #Reorder levels
 BrayDFamoxpla$Description=factor(BrayDFamoxpla$Description, levels = c("SAM_Amoxicillin_wk0","SAM_Amoxicillin_wk1","SAM_Amoxicillin_wk4","SAM_Amoxicillin_wk8","SAM_Amoxicillin_wk12","SAM_Amoxicillin_wk104","SAM_Placebo_wk0","SAM_Placebo_wk1","SAM_Placebo_wk4","SAM_Placebo_wk8","SAM_Placebo_wk12","SAM_Placebo_wk104"))
 
 
-a<-ggplot(BrayDFamoxpla, aes(x=V1, y=V2, color=Description, size=Week_of_follow_up)) + geom_point()+
+a<-ggplot(BrayDFamoxpla, aes(x=V1, y=V2, color=Description, shape=as.factor(Week_of_follow_up))) + geom_point()+
   theme_bw()+theme(legend.text=element_text(size=12, face="bold"),legend.title=element_text(size=14, face="bold"),
         panel.grid.minor = element_blank(), panel.border = element_rect(colour = "black"), 
         axis.text.x= element_text(size=12,angle=45,hjust=1,vjust=1,face="bold"),
         axis.text.y= element_text(size=12,face="bold"))+ scale_color_manual(values=c("SAM_Amoxicillin_wk0"="#ffffb2","SAM_Amoxicillin_wk1"="#fed976","SAM_Amoxicillin_wk4"="#feb24c","SAM_Amoxicillin_wk8"="#fd8d3c","SAM_Amoxicillin_wk12"="#f03b20","SAM_Amoxicillin_wk104"="#E31A1C","SAM_Placebo_wk0"="#f1eef6","SAM_Placebo_wk1"="#d0d1e6","SAM_Placebo_wk4"="#a6bddb","SAM_Placebo_wk8"="#74a9cf","SAM_Placebo_wk12"="#2b8cbe","SAM_Placebo_wk104"="#1F78B4"))+
-  ylab("PCO2 (11.6%)")+
+  ylab("PCO2 (11.7%)")+
   xlab("PCO1 (23.3%)") 
 ggMarginal(a,type="boxplot", groupColour = TRUE, groupFill = TRUE, size = 2)
-ggsave(file="2021Figs/230123_AmoxPlaBCplotplusggmarginal.pdf")
+ggsave(file="2021Figs/230913_AmoxPlaBCplotplusggmarginalshape.pdf")
 
 adonis2(Brayamoxpla~Description, data = BrayDFamoxpla, permutations = 999, method ="bray", na.rm=TRUE)
 #              Df SumOfSqs      R2     F Pr(>F)
